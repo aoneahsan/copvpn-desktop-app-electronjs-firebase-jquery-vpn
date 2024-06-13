@@ -607,10 +607,11 @@ $('button.connect-vpn').click(function (e) {
 	isPressed = !isPressed; // toggle
 
 	if (isPressed) {
-		player.play();
-		connectOpenVPN(true);
-		// player.stop();
-	} else {
+		// 	player.play();
+		// 	connectOpenVPN(true);
+		// 	// player.stop();
+		// } else {
+		// 	disconnectOpenVPN();
 		disconnectOpenVPN();
 	}
 
