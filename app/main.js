@@ -45,7 +45,7 @@ function createMainWindow() {
 		width: 900,
 		height: 700,
 		frame: false,
-		resizable: false,
+		resizable: true,
 		maximizable: false,
 		fullscreen: false,
 		autoHideMenuBar: true,

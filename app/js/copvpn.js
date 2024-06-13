@@ -4,28 +4,21 @@
 'use strict';
 
 const os = require('os');
-const { ipcRenderer } = require('electron');
-const { net } = require('electron');
+const { ipcRenderer, net } = require('electron');
 const path = require('path');
 const netSocket = require('net');
 const { exec, spawn } = require('child_process');
 const sudo = require('sudo-prompt');
 const https = require('https');
-const ping = require('ping');
 const isOnline = require('is-online');
 const fs = require('fs');
-const { JSDOM } = require('jsdom');
 const publicIp = require('public-ip');
 const ps = require('ps-node');
-const shell = require('electron').shell;
-const { dialog } = require('electron');
 
 const uiCloseBtn = document.getElementById('close-btn');
 const uiMinimizeBtn = document.getElementById('minimize-btn');
 const uitrayBtn = document.getElementById('tray-btn');
-const uiConnectBtn = document.getElementById('connect-btn');
 const uiStatus = document.getElementById('status');
-const uiHelperDownload = document.getElementById('helper-download');
 const uiUptime = document.getElementById('uptime');
 const uiVersion = document.getElementById('version');
 const uiSent = document.getElementById('sent');
@@ -35,26 +28,19 @@ const uiOptKillSwitch = document.getElementById('opt-kill-switch');
 const uiAlwaysOn = document.getElementById('always-on');
 const uiRunOnStartup = document.getElementById('run-on-startup');
 const uiVpnDebug = document.getElementById('vpn-debug');
-// const uiErrorDependency = document.getElementById("dependency-problem");
-// const uiErrorReport = document.getElementById("error-report");
 
 var connectedBeginTime = Date.now();
 var connectTimeoutMillisec = 5000;
 var aSelectedServer = null;
-var aConnectingServer = null;
-var aConnectedServer = null;
 var resourcesDir = process.resourcesPath + path.sep; // "." + path.sep + "resources" + path.sep + "app" + path.sep;
 var appDir = os.homedir() + path.sep + 'CopApp' + path.sep;
-// var customDir = appDir + "custom";
 var ovpnDir = appDir + 'ovpn';
-// var usersDir = appDir + "users";
 var miscDir = appDir + 'ms';
 var openVPNExecCmd = 'openvpn';
 var openvpn = null;
 var openvpnPID = 0;
 var connectingTimeout = null;
 var tmpCredentials = null;
-var aFastestServer = null;
 var openVpnMacOs = 'openvpn-darwin-arm64';
 
 var fpOpenVPNStats = null;
@@ -69,28 +55,20 @@ var tempOvpn = 'tempFile.ovpn';
 var incompatibleCertExit = false;
 
 appDir = path.resolve(appDir) + path.sep;
-// customDir = path.resolve(customDir) + path.sep;
 ovpnDir = path.resolve(ovpnDir) + path.sep;
-// usersDir = path.resolve(usersDir) + path.sep;
-miscDir = path.resolve(miscDir) + path.sep; //tmp.dirSync().name + path.sep;
-// miscDir = tmp.dirSync().name + path.sep;
+miscDir = path.resolve(miscDir) + path.sep;
 var cliLogFilePath = miscDir + 'CopVPNApp-helper.log';
-// var cliPath = '';
 var cliPath = miscDir + cliName;
 
 var tempOvpnPath = ovpnDir + tempOvpn;
 const cfgFilePath = path.normalize(miscDir + 'VPNApp.cfg');
 
 console.log(appDir);
-// console.log(customDir);
 console.log(ovpnDir);
-// console.log(usersDir);
 console.log(miscDir);
 
 mkDirByPathSync(appDir);
-// mkDirByPathSync(customDir);
 mkDirByPathSync(ovpnDir);
-// mkDirByPathSync(usersDir);
 mkDirByPathSync(miscDir);
 
 /*
