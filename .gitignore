@@ -90,3 +90,10 @@ typings/
 
 # Electron-Forge
 out/
+
+
+*lock*
+
+*ignore*
+
+.history
