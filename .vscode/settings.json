@@ -1,0 +1,6 @@
+{
+	"cSpell.words": ["copvpn"],
+	"editor.formatOnSave": true,
+	"files.autoSave": "onWindowChange",
+	"prettier.enable": true
+}
