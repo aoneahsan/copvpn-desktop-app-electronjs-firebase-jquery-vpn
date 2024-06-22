@@ -52,6 +52,18 @@ const config: ForgeConfig = {
       [FuseV1Options.OnlyLoadAppFromAsar]: true,
     }),
   ],
+  publishers: [
+    {
+      name: '@electron-forge/publisher-github',
+      config: {
+        repository: {
+          owner: 'me',
+          name: 'copvpn-desktop-app-electronjs-firebase-jquery-vpn',
+        },
+        prerelease: true,
+      },
+    },
+  ],
 };
 
 export default config;
