@@ -1,5 +1,3 @@
-const { exec, spawn } = require('child_process');
-const sudo = require('sudo-prompt');
 const electron = require('electron');
 const { BrowserWindow, app } = require('electron');
 const { dialog, Tray } = require('electron');
@@ -7,21 +5,8 @@ const path = require('path');
 const url = require('url');
 const nativeImage = require('electron').nativeImage;
 const ipcMain = electron.ipcMain;
-const { autoUpdater } = require('electron-updater');
-const os = require('os');
-// const exec = require('child_process').exec;
-
-const fs = require('fs');
-
-// const {	GoogleAuthProvider,OAuthProvider,getAuth,signInWithPopup,} = require('firebase/auth');
-// const firebaseConfig = require('./js/firebase-config');
 
 let mainWindow;
-let myWindow = null;
-
-const dispatch = (data) => {
-	win.webContents.send('message', data);
-};
 
 if (process.defaultApp) {
 	if (process.argv.length >= 2) {
@@ -33,8 +18,6 @@ if (process.defaultApp) {
 	app.setAsDefaultProtocolClient('electron-fiddle');
 }
 const gotTheLock = app.requestSingleInstanceLock();
-
-// electron.dialog.showErrorBox("Root required", "Please run this program as root/Administrator");
 
 function createMainWindow() {
 	var iconPath = path.join(__dirname, 'favicon.png');
@@ -67,11 +50,9 @@ function createMainWindow() {
 		mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
 	});
 	mainWindow.on('show', () => {
-		// tray.setHighlightMode('never')
 		tray.setToolTip('CopVPN');
 	});
 	mainWindow.on('hide', () => {
-		// tray.setHighlightMode('always')
 		tray.setToolTip('CopVPN');
 	});
 
@@ -135,10 +116,6 @@ function createMainWindow() {
 	splash.setAlwaysOnTop(true, 'screen');
 	splash.center();
 
-	// mainWindow.once('ready-to-show', () => {
-	//   mainWindow.show();
-	// });
-
 	splash.once('ready-to-show', () => {
 		splash.show();
 	});
@@ -147,78 +124,26 @@ function createMainWindow() {
 		splash.close();
 		mainWindow.center();
 		mainWindow.show();
-		// cliStart();
 	}, 5000);
-
-	// mainWindow.webContents.openDevTools();
-
-	// mainWindow.webContents.on('did-finish-load', () => {
-	//   const networkInterfaces = os.networkInterfaces();
-	//   const macAddresses = {};
-	//   const osVersion = os.release();
-	//   Object.keys(networkInterfaces).forEach((interfaceName) => {
-	//     const addresses = networkInterfaces[interfaceName].filter(iface => !iface.internal);
-	//     if (addresses.length > 0) {
-	//       macAddresses[interfaceName] = addresses[0].mac;
-	//     }
-	//   });
-	//   exec("ioreg -l | grep IOPlatformSerialNumber | awk '{print $4}' | tr -d '\"'", (error, stdout) => {
-	//     console.log('SerialNo. ',stdout.trim());
-	//   });
-	//   console.log('macAddress: ', macAddresses.en0);
-	//   console.log('osVersion: ', osVersion);
-	//   // win.webContents.send('mac-address', macAddresses);
-	// });
 }
 
 if (!gotTheLock) {
 	app.quit();
 } else {
-	app.on('second-instance', (event, commandLine, workingDirectory) => {
-		// Someone tried to run a second instance, we should focus our window.
+	app.on('second-instance', (e, commandLine, workingDirectory) => {
 		if (mainWindow) {
 			if (mainWindow.isMinimized()) mainWindow.restore();
 			mainWindow.focus();
 		}
 		let string = decodeURI(commandLine.pop());
 		let token = string.split('://');
-		// the commandLine is array of strings in which last element is deep link url
-		// dialog.showErrorBox('Welcome Back', `You arrived from: ${commandLine.pop()}`)
-		// dialog.showErrorBox('welcome to CopVPN', `Please wait for data verification...`)
 		mainWindow.webContents.send('sso_login', token[1].replace(/\//g, ''));
 	});
-
-	// Create mainWindow, load the rest of the app, etc...
-	// app.whenReady().then(() => {
-	//   createMainWindow()
-	// })
 }
 
-ipcMain.on('show_message', (event, args) => {
-	// console.log(result);
+ipcMain.on('show_message', (e, args) => {
 	dialog.showErrorBox(args.type, args.message);
 });
-
-// ipcMain.on('app_password_ask', (event, args) => {
-//   // console.log(args);
-//   event.preventDefault();
-//   const options = {
-//     message: "Are you sure you want to Close?",
-//     type: "warning",
-//     buttons: ["Exit"],
-//     defaultId: 0,
-//     title: "Confirm Close",
-//     detail: "This will shutdown the application !!!"
-//   };
-
-//   dialog.showMessageBox(null, options
-//   ).then((res) => {
-//       console.log(res.response);
-//       if(res.response === 0){
-//         app.quit()
-//       }
-//   });
-// })
 
 const getTheLock = app.requestSingleInstanceLock();
 if (!getTheLock) {
@@ -235,60 +160,22 @@ if (!getTheLock) {
 	});
 }
 
-app.on('open-url', (event, url) => {
+app.on('open-url', (e, url) => {
 	let string = decodeURI(url);
 	let token = string.split('://');
-	// dialog.showErrorBox('welcome to CopVPN', `Please wait for data verification...`)
 	mainWindow.webContents.send('sso_login', token[1].replace(/\//g, ''));
 });
 
 app.on('ready', function () {
 	createMainWindow();
-	// autoUpdater.checkForUpdatesAndNotify()
-
 	mainWindow.webContents.on('did-finish-load', () => {
 		mainWindow.webContents.send('version', app.getVersion());
 	});
 });
 
-/*New Update Available*/
-
-// autoUpdater.on('checking-for-update', () => {
-//   dispatch('Checking for update...')
-// })
-
-// autoUpdater.on('update-available', (info) => {
-//   dispatch('Update available.')
-// })
-
-// autoUpdater.on('update-not-available', (info) => {
-//   dispatch('Update not available.')
-// })
-
-// autoUpdater.on('error', (err) => {
-//   dispatch('Error in auto-updater. ' + err)
-// })
-
-// autoUpdater.on('download-progress', (progressObj) => {
-//   // let log_message = "Download speed: " + progressObj.bytesPerSecond
-//   // log_message = log_message + ' - Downloaded ' + progressObj.percent + '%'
-//   // log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')'
-//   // dispatch(log_message)
-
-//   mainWindow.webContents.send('download-progress', progressObj.percent)
-
-// })
-
-// autoUpdater.on('update-downloaded', (info) => {
-//   dispatch('Update downloaded')
-// })
-
-// app.setAsDefaultProtocolClient("myfirstblog");
-
 app
 	.whenReady()
 	.then(() => {
-		// myWindow = createWindow();
 		myWindow = splash();
 	})
 	.catch((_err) => {

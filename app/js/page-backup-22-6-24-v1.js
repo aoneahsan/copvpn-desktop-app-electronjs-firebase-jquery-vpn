@@ -38,6 +38,7 @@ var interval = setInterval(function () {
 	if (minutes < 0) clearInterval(interval);
 	seconds = seconds < 0 ? 59 : seconds;
 	seconds = seconds < 10 ? '0' + seconds : seconds;
+	//minutes = (minutes < 10) ?  minutes : minutes;
 	$('#countdown').html(minutes + ':' + seconds);
 	timer2 = minutes + ':' + seconds;
 }, 1000);
@@ -132,6 +133,18 @@ $('#signincode-otp-submit').click(function (e) {
 		});
 });
 
+// $(".login-button-trigger").click(function (e) {
+//   e.preventDefault();
+//   $(".login-wrap").css("display", "none");
+//   $(".login-area-wrapper").css("display", "block");
+// });
+
+// $('#btn-redeem').click(function (e) {
+//   e.preventDefault();
+//   let data = localStorage.getItem('userInfo');
+//   console.log(JSON.parse(data));
+// });
+
 $('.server-select-area button.selected').click(function (e) {
 	e.preventDefault();
 	$('.all-server-list-wrap').addClass('active');
@@ -168,6 +181,7 @@ Accordion.prototype.dropdown = function (e) {
 		$el.find('.menu-tab-content').not($next).parent().removeClass('active');
 	}
 };
+var accordion = new Accordion(jQuery('.setting-bar-wrapper'), false);
 
 $('.setting-item-has-child .wrap').click(function () {
 	let menu = $(this).parent().data('menutype');
@@ -391,11 +405,14 @@ $('.move-to-pass-change').click(function (e) {
 		.catch((error) => {
 			console.log('Error => ', error);
 		});
+	// $('.change-pass-form-wrapper').css('display', 'block');
+	//     $('.change-pass-code-inside').css('display', 'none');
 });
 
 $('.chngpass').on('click', function (e) {
 	e.preventDefault();
 	let userInfo = JSON.parse(localStorage.getItem('userInfo'));
+	// $(this).siblings('.menu-item').click();
 	let passToken = $('#resetToken').val();
 	let NewPassword = $('#NewPassword').val();
 	let ConfirmPass = $('#ConfirmPass').val();
@@ -419,6 +436,10 @@ $('.chngpass').on('click', function (e) {
 		.request(config)
 		.then((response) => {
 			console.log(response);
+			if (response?.data?.success) {
+				// $('.change-pass-form-wrapper').css('display', 'block');
+				// $('.change-pass-code-inside').css('display', 'none');
+			}
 		})
 		.catch((error) => {
 			console.log('Error => ', error);
@@ -525,6 +546,7 @@ $('#btn-signup').click(function (e) {
 	axios
 		.request(config)
 		.then((response) => {
+			// console.log(response);
 			if (response?.data?.status) {
 				localStorage.setItem('token', response?.data?.data?.token);
 				localStorage.setItem(
@@ -570,6 +592,8 @@ $('#apple-signup').on('click', function (e) {
 	shell.openExternal(`${APP_URL}desktop-app/apple/login`);
 });
 
+////////======================================================////////////////////////////
+
 var allServer = [];
 var isPressed_str = '';
 var isPressed = isPressed_str === 'true'; // "cast" to Boolean
@@ -583,14 +607,28 @@ $('button.connect-vpn').click(function (e) {
 	isPressed = !isPressed; // toggle
 
 	if (isPressed) {
-		player.play();
-		connectOpenVPN(true);
-	} else {
+		// 	player.play();
+		// 	connectOpenVPN(true);
+		// 	// player.stop();
+		// } else {
+		// 	disconnectOpenVPN();
 		disconnectOpenVPN();
 	}
 
 	this.setAttribute('data-connect', isPressed);
+	// player.stop();
+	// $(this).parent('connected-btn-area').toggleClass('connected');
+
+	// $(this).siblings('lottie-player').play();
+	// setTimeout(function () {
+	//   $(this).siblings('lottie-player').css('opacity', '0');
+	// }, 1000);
 });
+
+// let play = document.querySelector('.connect-vpn');
+// play.onclick = function () {
+//   player.play();
+// };
 
 $('.logout').click(function (e) {
 	e.preventDefault();
@@ -600,6 +638,10 @@ $('.logout').click(function (e) {
 		method: 'post',
 		maxBodyLength: Infinity,
 		url: `${BASE_URL}/user/logout/`,
+		// data:{
+		//     email: email,
+		//     password: pass
+		// },
 		headers: {
 			ContentType: 'application/json',
 			Authorization: `Bearer ${token}`,
@@ -610,6 +652,7 @@ $('.logout').click(function (e) {
 		.request(config)
 		.then((response) => {
 			if (response?.data?.status) {
+				// console.log(response);
 				disconnectOpenVPN();
 				localStorage.removeItem('token');
 				localStorage.removeItem('userInfo');
@@ -665,6 +708,7 @@ function userLogin(email, pass) {
 	axios
 		.request(config)
 		.then((response) => {
+			// console.log(response);
 			if (response?.data?.status) {
 				localStorage.setItem('token', response?.data?.data?.token);
 				localStorage.setItem(
@@ -720,6 +764,11 @@ function menuType(type, content) {
 	}
 }
 
+function removeDevice(id) {
+	$('.remove-device-popup').data('remove', id);
+	$('.remove-device-popup').addClass('active');
+}
+
 $('#remove-confirmation').click(function () {
 	let data = $(this).parent().parent().data('remove');
 	console.log(data);
@@ -762,6 +811,7 @@ function userData() {
 	serverListData();
 	if (token != null && token.length > 0) {
 		ServerList();
+		// connectedDeviceList();
 		appContent();
 		$('.userEmail').html(userInfo.email);
 		$('.login-wrap').css('display', 'none');
@@ -786,6 +836,7 @@ function ServerList() {
 		axios
 			.request(config)
 			.then((response) => {
+				// console.log(response);
 				if (response?.data?.success) {
 					localStorage.setItem(
 						'servers',
@@ -803,6 +854,7 @@ function ServerList() {
 function stateNameData(stateData, flag) {
 	stateData.flag = flag;
 	allServer.push(stateData);
+	// console.log(stateData);
 	let conf = stateData.configurations.openvpn.toString();
 	let state =
 		'<div class="country-server-item">' +
@@ -831,6 +883,35 @@ function stateNameData(stateData, flag) {
 	return state;
 }
 
+function selectServer(serverId) {
+	// console.log(serverId);
+	// var img = document.querySelector('img[name="edit-save"]');
+	$.each(allServer, function (s, server) {
+		if (serverId == server.id) {
+			// console.log(server.configurations.openvpn);
+			$('#serverFlag').attr('src', server.flag);
+			$('.selected .name').html(server.name);
+			getOvpnFile(server.configurations.openvpn);
+
+			if (isPressed) {
+				disconnectOpenVPN();
+
+				if ($('#status').text() == 'Disconnected') {
+					$('#status').text('Reconnecting....');
+					$('#connect-btn').attr('data-connect', false);
+					$('.center-connection-area').removeClass('connected');
+					isPressed = false;
+					setTimeout(function () {
+						$('#connect-btn').trigger('click');
+					}, 2000);
+				}
+			}
+		}
+	});
+
+	$('.all-server-list-wrap').removeClass('active');
+}
+
 function serverListData() {
 	let servers = JSON.parse(localStorage.getItem('servers'));
 	if (servers == null) return;
@@ -838,6 +919,7 @@ function serverListData() {
 	let countryName = [];
 	let server = '';
 	let tabs = '';
+	// console.log(servers);
 	$.each(servers, function (c, country) {
 		tabs += `<li><a href="#${country.name.replace(/\s/g, '')}">${
 			country.name
@@ -909,6 +991,7 @@ function serverListData() {
 				server += `<div id="${cn.name.replace(/\s/g, '')}" class="tab-content">
             <div class="server-toggle-wrapper">`;
 				$.each(cn.country, function (l, lc) {
+					// console.log(cn);
 					let countryData = '<div class="server-by-country">';
 					$.each(lc.vpn_servers, function (s, state) {
 						countryData += stateNameData(state, lc?.flag_url);
@@ -934,6 +1017,7 @@ function serverListData() {
 				server += `<div id="${cn.name.replace(/\s/g, '')}" class="tab-content">
             <div class="server-toggle-wrapper">`;
 				$.each(cn.country, function (l, lc) {
+					// console.log(cn);
 					let countryData = '<div class="server-by-country">';
 					$.each(lc.vpn_servers, function (s, state) {
 						countryData += stateNameData(state, lc?.flag_url);
@@ -1008,6 +1092,8 @@ function serverTab() {
 				.removeClass('open');
 		}
 	};
+	var accordion = new Accordion($('.server-toggle-wrapper'), false);
+	// $('.servers-wrapper .server-item:first-child .server-head').click();
 	$('.server-toggle-wrapper .server-item:first-child .server-head')
 		.click()
 		.next('.server-by-country')
@@ -1036,7 +1122,9 @@ function connectedDeviceList() {
 			.request(config)
 			.then((response) => {
 				if (response?.data?.success && response?.data?.data[0].length > 0) {
+					// console.log(response);
 					$.each(response?.data?.data[0], function (d, device) {
+						// console.log(device);
 						data += `<div class="device">
               <div class="inner">
               <div class="top">
@@ -1102,6 +1190,7 @@ function appContent() {
 		axios
 			.request(config)
 			.then((response) => {
+				// console.log(response);
 				if (response?.data?.success) {
 					localStorage.setItem('aboutUs', JSON.stringify(response?.data?.data));
 					$('.description').html(response?.data?.data?.about_us_description);
