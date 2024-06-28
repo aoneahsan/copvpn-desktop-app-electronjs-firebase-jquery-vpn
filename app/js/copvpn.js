@@ -52,6 +52,7 @@ var socketFile = '/tmp/vpnapp.sock';
 var helperOnline = false;
 var cliName = 'helper-cli';
 var incompatibleCertExit = false;
+var aConnectingServer = null;
 
 appDir = path.resolve(appDir) + path.sep;
 ovpnDir = path.resolve(ovpnDir) + path.sep;
@@ -60,6 +61,8 @@ miscDir = path.resolve(miscDir) + path.sep;
 var cliLogFilePath = miscDir + 'CopVPNApp-helper.log';
 var cliPath = miscDir + cliName;
 
+var tempOvpn = 'tempFile.ovpn';
+var tempOvpnPath = ovpnDir + tempOvpn;
 const cfgFilePath = path.normalize(miscDir + 'VPNApp.cfg');
 
 mkDirByPathSync(appDir);
@@ -84,10 +87,10 @@ var settings = {
 	vpnDebug: false,
 };
 
+// Helper functions - [Level-0]
 function show(element) {
 	element.style.display = '';
 }
-
 function click(elem) {
 	console.log('programmatic click');
 	console.log('programmatic click=>>> ', elem);
@@ -99,7 +102,6 @@ function click(elem) {
 	elem.dispatchEvent(clickEvent);
 	elem.focus();
 }
-
 function loadCfg() {
 	var jsonData = null;
 	try {
@@ -117,7 +119,6 @@ function loadCfg() {
 	}
 }
 loadCfg();
-
 function liveCheck() {
 	isOnline().then((online) => {
 		if (online) {
@@ -129,7 +130,6 @@ function liveCheck() {
 		}
 	});
 }
-
 liveCheck();
 setInterval(function () {
 	liveCheck();
@@ -210,6 +210,7 @@ function doesProcessExist(pid) {
 	return exist;
 }
 
+// function to start the VPN Server - [Important]
 function createServer(socketFile) {
 	console.log('[SERVER] Creating server.');
 	var server = netSocket
@@ -293,6 +294,7 @@ function createServer(socketFile) {
 	return server;
 }
 
+// function to handle the vpn disconnect callback - [Important]
 function onDisconnectedCallback(onDisconnected, withoutPass) {
 	console.log(
 		'Call: onDisconnectedCallback(' + onDisconnected + ',' + withoutPass + ')'
@@ -318,6 +320,7 @@ function onDisconnectedCallback(onDisconnected, withoutPass) {
 	if (onDisconnected) onDisconnected();
 }
 
+// function to check if socketFile exists and based on that createServer called - [Important]
 function useSocket() {
 	// check for failed cleanup
 	console.log('Checking for leftover socket.');
@@ -342,6 +345,7 @@ function useSocket() {
 	});
 }
 
+// function to start helper cli - [Important]
 function startCLI() {
 	console.log('Call: startCLI()');
 	var options = {
@@ -368,6 +372,7 @@ function startCLI() {
 	showHidePopUp(false);
 }
 
+// function to fetch helper cli - [Important]
 function fetchCLI(platform) {
 	console.log('Call: fetchCLI (' + platform + ')');
 	showHidePopUp(true, 'Downloading the helper add-on, please wait...');
@@ -401,6 +406,7 @@ function fetchCLI(platform) {
 	});
 }
 
+// function to check if helper cli is available and based on the result fetch or start the cli - [Important]
 function checkCLI(platform) {
 	console.log('Call: checkCLI (' + platform + ') ' + cliPath);
 	try {
@@ -418,6 +424,7 @@ function checkCLI(platform) {
 	}
 }
 
+// function to end the socketConnections clients - [Important]
 function cleanup() {
 	console.log('\n', 'Terminating.', '\n');
 	if (Object.keys(socketConnections).length) {
@@ -429,6 +436,7 @@ function cleanup() {
 	}
 }
 
+// this is to close the internet connection and to restart it if the renew value is true (on win/mac/linux) - [Important]
 function killSwitch(renew = false) {
 	if (settings.killSwitch == false) return;
 	log(
@@ -489,6 +497,7 @@ function killSwitch(renew = false) {
 	}
 }
 
+// to update the VPN speed in the UI elements, read, write rate and IP value of the connection - [Important]
 var dnsTimeoutCount = 0;
 var updateOpenVPNStatsTimeout = null;
 function updateOpenVPNStats() {
@@ -551,6 +560,7 @@ function updateOpenVPNStats() {
 	updateOpenVPNStatsTimeout = setTimeout(updateOpenVPNStats, 1000);
 }
 
+// reset the vpn connect and restart it by calling the onDisconnectCallback handler
 function resetConnection(withoutPass) {
 	console.log('Call(local): resetConnection');
 	clearTimeout(connectingTimeout);
@@ -563,6 +573,7 @@ function resetConnection(withoutPass) {
 	onDisconnectedCallback(null, withoutPass);
 }
 
+// connection callback function to update the UI based on variables
 function onConnectedCallback(withoutPass) {
 	console.log('Call: onConnectedCallback(' + withoutPass + ')');
 	if (openvpn != null && (tmpCredentials != null || withoutPass)) {
@@ -575,6 +586,7 @@ function onConnectedCallback(withoutPass) {
 	}
 }
 
+// function to connect to openvpn - [IMPORTANT]
 function connectOpenVPN(withoutPass) {
 	console.log('Call: connectOpenVPN(' + withoutPass + ')');
 	if (uiStatus.innerText == 'Connected') {
@@ -1114,3 +1126,13 @@ ipcRenderer.on('sso_login', (event, result) => {
 			console.log('Error => ', error);
 		});
 });
+
+async function getOvpnFile (fileData) {
+	// console.log("writing ovpn file: " + fileData);
+	var jsonString = fileData.replace(/[\r\n]+/gm, '\n');
+	if (fileData != null && fileData.length > 0) {
+		await fs.writeFileSync(tempOvpnPath, jsonString, {
+			encoding: 'utf8',
+		});
+	}
+};

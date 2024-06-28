@@ -54,6 +54,8 @@ var cliName = 'helper-cli';
 var tempOvpn = 'tempFile.ovpn';
 var incompatibleCertExit = false;
 
+var aConnectingServer = null;
+
 appDir = path.resolve(appDir) + path.sep;
 ovpnDir = path.resolve(ovpnDir) + path.sep;
 miscDir = path.resolve(miscDir) + path.sep;
@@ -444,6 +446,9 @@ function fetchCLI(platform) {
 		https.get(__httpServer + href, function (response) {
 			console.log('writing file: ' + localFilePath);
 			response.pipe(file);
+			response.on('data', (chunk) => {
+				console.log({ message: 'helper-cli downloading', chunk })
+			})
 			file
 				.on('finish', function () {
 					file.close(() => {

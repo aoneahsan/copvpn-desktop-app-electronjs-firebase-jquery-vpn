@@ -1,10 +1,13 @@
-const electron = require('electron');
-const { BrowserWindow, app } = require('electron');
-const { dialog, Tray } = require('electron');
+const {
+	BrowserWindow,
+	app,
+	dialog,
+	Tray,
+	nativeImage,
+	ipcMain,
+} = require('electron');
 const path = require('path');
 const url = require('url');
-const nativeImage = require('electron').nativeImage;
-const ipcMain = electron.ipcMain;
 
 let mainWindow;
 
@@ -25,8 +28,8 @@ function createMainWindow() {
 	mainWindow = new BrowserWindow({
 		title: 'CopVPN',
 		icon: iconPath,
-		width: 900,
-		height: 700,
+		width: 1700,
+		height: 1000,
 		frame: false,
 		resizable: true,
 		maximizable: false,
@@ -131,34 +134,36 @@ if (!gotTheLock) {
 	app.quit();
 } else {
 	app.on('second-instance', (e, commandLine, workingDirectory) => {
-		if (mainWindow) {
-			if (mainWindow.isMinimized()) mainWindow.restore();
-			mainWindow.focus();
+		try {
+			if (mainWindow) {
+				if (mainWindow.isMinimized()) {
+					mainWindow.restore();
+					mainWindow.focus();
+				}
+			}
+		} catch (error) {
+			console.error(
+				'Error Occurred while trying to focus the available mainWindow',
+				error
+			);
 		}
-		let string = decodeURI(commandLine.pop());
-		let token = string.split('://');
-		mainWindow.webContents.send('sso_login', token[1].replace(/\//g, ''));
+
+		try {
+			let string = decodeURI(commandLine.pop());
+			let token = string.split('://');
+			mainWindow.webContents.send('sso_login', token[1].replace(/\//g, ''));
+		} catch (error) {
+			console.error(
+				'Error Occurred while trying to complete the sso_login, in "second-instance" event listener',
+				error
+			);
+		}
 	});
 }
 
 ipcMain.on('show_message', (e, args) => {
 	dialog.showErrorBox(args.type, args.message);
 });
-
-const getTheLock = app.requestSingleInstanceLock();
-if (!getTheLock) {
-	app.quit();
-} else {
-	app.on('second-instance', (event, commandLine, workingDirectory) => {
-		console.log(event);
-		if (mainWindow) {
-			if (mainWindow.isMinimized()) {
-				mainWindow.restore();
-				mainWindow.focus();
-			}
-		}
-	});
-}
 
 app.on('open-url', (e, url) => {
 	let string = decodeURI(url);
@@ -176,7 +181,7 @@ app.on('ready', function () {
 app
 	.whenReady()
 	.then(() => {
-		myWindow = splash();
+		splash();
 	})
 	.catch((_err) => {
 		return false;

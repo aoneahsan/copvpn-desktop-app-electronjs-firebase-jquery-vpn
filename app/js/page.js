@@ -46,16 +46,15 @@ var interval = setInterval(function () {
  * end Timer Countdowm
  */
 
+// event listeners for signin code buttons  - [NOT IMPORTANT]
 $('.get-signin-code').click(function () {
 	$('.signin-up-tabs-wrapper').css('display', 'none');
 	$('.signin-w-code-wrapper').css('display', 'block');
 });
-
 $('.back-signin-code').click(function () {
 	$('.signin-up-tabs-wrapper').css('display', 'block');
 	$('.signin-w-code-wrapper').css('display', 'none');
 });
-
 $('#signincode-email-submit').click(function (e) {
 	e.preventDefault();
 	let email = $('#signincode-input').val();
@@ -90,7 +89,6 @@ $('#signincode-email-submit').click(function (e) {
 			console.log('Error => ', error);
 		});
 });
-
 $('#signincode-otp-submit').click(function (e) {
 	e.preventDefault();
 	let email = $('#signincode-input').val();
@@ -132,6 +130,7 @@ $('#signincode-otp-submit').click(function (e) {
 		});
 });
 
+// event listeners for other UI elements  - [NOT IMPORTANT]
 $('.server-select-area button.selected').click(function (e) {
 	e.preventDefault();
 	$('.all-server-list-wrap').addClass('active');
@@ -156,7 +155,6 @@ var Accordion = function (el, multiple) {
 		this.dropdown
 	);
 };
-
 Accordion.prototype.dropdown = function (e) {
 	var $el = e.data.el;
 	($this = jQuery(this)), ($next = $this.next());
@@ -169,6 +167,7 @@ Accordion.prototype.dropdown = function (e) {
 	}
 };
 
+// event listeners for other UI elements  - [NOT IMPORTANT]
 $('.setting-item-has-child .wrap').click(function () {
 	let menu = $(this).parent().data('menutype');
 	menuType(menu, $(this));
@@ -176,15 +175,12 @@ $('.setting-item-has-child .wrap').click(function () {
 	$('.menu-tab-content').css('overflow', 'hidden');
 	$('.menu-tab-content').scrollTop(0);
 });
-
 $('.setting-item-has-child .inside-settings-pop .menu-title').click(function (
 	e
 ) {
 	$(this).parent().removeClass('inside-pop-active');
 	$('.menu-tab-content').css('overflow', 'auto');
-	// $('.menu-tab-content').css('height', '100vh');
 });
-
 $('.setting-item').on('click', function (e) {
 	// e.preventDefault();
 	let dtype = $(this).data('type');
@@ -196,12 +192,10 @@ $('.setting-item').on('click', function (e) {
 		shell.openExternal('https://copvpn.com/');
 	}
 });
-
 $('.button-pre .unlock').on('click', function (e) {
 	e.preventDefault();
 	shell.openExternal('https://copvpn.com/pricing/');
 });
-
 $('#accordion')
 	.find('.accordion-toggle')
 	.click(function () {
@@ -218,7 +212,6 @@ $('#accordion')
 		//Hide the other panels
 		$('.accordion-content').not($(this).next()).slideUp('fast');
 	});
-
 $('input#enable-split-tunnel').change(function () {
 	if ($(this).is(':checked')) {
 		$('.split-tunnel-show-hide').addClass('show-tunnel');
@@ -227,6 +220,7 @@ $('input#enable-split-tunnel').change(function () {
 	}
 });
 
+// event listeners for change password buttons - [LEVEL-0]
 $('.pass-forget').click(function () {
 	$('.signin-up-tabs-wrapper').css('display', 'none');
 	$('.reset-pass-form').css('display', 'block');
@@ -236,7 +230,6 @@ $('.back-reset-pass').click(function () {
 	$('.signin-up-tabs-wrapper').css('display', 'block');
 	$('.reset-pass-form').css('display', 'none');
 });
-
 $('.move-to-reset-code').click(function (e) {
 	e.preventDefault();
 	let email = $('#reset-email').val();
@@ -270,12 +263,10 @@ $('.move-to-reset-code').click(function (e) {
 			console.log('Error => ', error);
 		});
 });
-
 $('#forget-resend-again').on('click', function (e) {
 	e.preventDefault();
 	alert('forget-resend');
 });
-
 $('.move-to-confirm-pass').click(function (e) {
 	e.preventDefault();
 	let Forgot1 = $('#forget-1').val();
@@ -314,7 +305,6 @@ $('.move-to-confirm-pass').click(function (e) {
 			console.log('Error => ', error);
 		});
 });
-
 $('#forget-pass-set').on('click', function (e) {
 	e.preventDefault();
 	let pass = $('#pass').val();
@@ -353,7 +343,6 @@ $('#forget-pass-set').on('click', function (e) {
 			console.log('Error => ', error);
 		});
 });
-
 $('.move-to-pass-change').click(function (e) {
 	e.preventDefault();
 	let userInfo = JSON.parse(localStorage.getItem('userInfo'));
@@ -392,7 +381,6 @@ $('.move-to-pass-change').click(function (e) {
 			console.log('Error => ', error);
 		});
 });
-
 $('.chngpass').on('click', function (e) {
 	e.preventDefault();
 	let userInfo = JSON.parse(localStorage.getItem('userInfo'));
@@ -425,16 +413,15 @@ $('.chngpass').on('click', function (e) {
 		});
 });
 
+// event listeners for other UI elements  - [NOT IMPORTANT]
 $('.close-trigger').click(function (e) {
 	e.preventDefault();
 	$(this).siblings('.menu-item').click();
 });
-
 $('.close-popup-remove-device').click(function (e) {
 	e.preventDefault();
 	$('.remove-device-popup').removeClass('active');
 });
-
 $('#btn-dependency-problem').click(function (e) {
 	e.preventDefault();
 	$('.dependency-problem').removeClass('active');
@@ -443,24 +430,20 @@ $('#btn-dependency-problem').click(function (e) {
 		$('#connect-btn').trigger('click');
 	}, 2000);
 });
-
 $('#subscribe').on('click', function (e) {
 	e.preventDefault();
 	alert('subscribe');
 });
-
 $('#play-store').on('click', function (e) {
 	e.preventDefault();
 	let url = JSON.parse(localStorage.getItem('aboutUs'));
 	shell.openExternal(url.playstore_url);
 });
-
 $('#app-store').on('click', function (e) {
 	e.preventDefault();
 	let url = JSON.parse(localStorage.getItem('aboutUs'));
 	shell.openExternal(url.app_store_url);
 });
-
 $('.followUs').on('click', function (e) {
 	e.preventDefault();
 	let url = JSON.parse(localStorage.getItem('aboutUs'));
@@ -481,6 +464,7 @@ $('.followUs').on('click', function (e) {
 	}
 });
 
+// event listener for signup/register button - [LEVEL-0]
 $('#btn-signup').click(function (e) {
 	e.preventDefault();
 	let policy = $('#policy').is(':checked');
@@ -541,6 +525,7 @@ $('#btn-signup').click(function (e) {
 		});
 });
 
+// event listeners for auth/login buttons - [LEVEL-0]
 $('#btn-signin').on('click', function (e) {
 	e.preventDefault();
 
@@ -564,7 +549,6 @@ $('#google-signup').on('click', function (e) {
 	e.preventDefault();
 	shell.openExternal(`${APP_URL}desktop-app/google/login`);
 });
-
 $('#apple-signup').on('click', function (e) {
 	e.preventDefault();
 	shell.openExternal(`${APP_URL}desktop-app/apple/login`);
@@ -574,6 +558,7 @@ var allServer = [];
 var isPressed_str = '';
 var isPressed = isPressed_str === 'true'; // "cast" to Boolean
 
+// event listener for connect vpn button - [LEVEL-0]
 $('button.connect-vpn').click(function (e) {
 	e.preventDefault();
 	$('.center-connection-area').toggleClass('connected');
@@ -592,6 +577,7 @@ $('button.connect-vpn').click(function (e) {
 	this.setAttribute('data-connect', isPressed);
 });
 
+// event listener to logout user - [LEVEL-0]
 $('.logout').click(function (e) {
 	e.preventDefault();
 	let token = localStorage.getItem('token');
@@ -626,6 +612,7 @@ $('.logout').click(function (e) {
 		});
 });
 
+// function to login user - [LEVEL-1]
 function userLogin(email, pass) {
 	localStorage.clear();
 	if (email.length == 0 && pass.length == 0) {
@@ -679,6 +666,7 @@ function userLogin(email, pass) {
 		});
 }
 
+// function to to handle "changePassword" & "devicesList" menu item calls - [LEVEL-0]
 function menuType(type, content) {
 	console.log(content);
 	let token = localStorage.getItem('token');
@@ -720,6 +708,7 @@ function menuType(type, content) {
 	}
 }
 
+// event listener to remove a device from user devices list - [LEVEL-0]
 $('#remove-confirmation').click(function () {
 	let data = $(this).parent().parent().data('remove');
 	console.log(data);
@@ -755,6 +744,7 @@ $('#remove-confirmation').click(function () {
 	}
 });
 
+// function to fetch and set the user data in localstorage - [LEVEL-1]
 function userData() {
 	let token = localStorage.getItem('token');
 	let userInfo = JSON.parse(localStorage.getItem('userInfo'));
@@ -769,6 +759,7 @@ function userData() {
 	}
 }
 
+// function to fetch and set the servers list data in localstorage - [LEVEL-1]
 function ServerList() {
 	let token = localStorage.getItem('token');
 	let servers = JSON.parse(localStorage.getItem('servers'));
@@ -800,6 +791,7 @@ function ServerList() {
 	}
 }
 
+// function to get server state html ui - [NOT IMPORTANT]
 function stateNameData(stateData, flag) {
 	stateData.flag = flag;
 	allServer.push(stateData);
@@ -831,6 +823,7 @@ function stateNameData(stateData, flag) {
 	return state;
 }
 
+// function to handle the servers list data ui - [NOT IMPORTANT]
 function serverListData() {
 	let servers = JSON.parse(localStorage.getItem('servers'));
 	if (servers == null) return;
@@ -845,6 +838,8 @@ function serverListData() {
 		countryName.push({ name: country.name, country: country.countries });
 	});
 	$('#server-tabs-nav').html(tabs);
+
+	console.log({ ml: 'page.js -> serverListData', countryName })
 
 	$.each(countryName, function (c, cn) {
 		switch (cn.name) {
@@ -961,6 +956,7 @@ function serverListData() {
 	serverTab();
 }
 
+// function to handle the server tab accordion ui - [NOT IMPORTANT]
 function serverTab() {
 	// Show the first tab and hide the rest
 	$('#server-tabs-nav li:first-child').addClass('active');
@@ -1014,6 +1010,7 @@ function serverTab() {
 		.slideDown();
 }
 
+// fetching the user devices list from the server and setting that in the app as html - [NOT IMPORTANT]
 function connectedDeviceList() {
 	let data = '';
 	let token = localStorage.getItem('token');
@@ -1086,6 +1083,7 @@ function connectedDeviceList() {
 	}
 }
 
+// just fetching the aboutus info from server and setting that in app - [NOT IMPORTANT]
 function appContent() {
 	let token = localStorage.getItem('token');
 	const config = {
