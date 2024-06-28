@@ -6,3 +6,4 @@ export const ovpnDir = appDir + 'ovpn';
 export const miscDir = appDir + 'ms';
 export const openVPNExecCmd = 'openvpn';
 export const logFile = miscDir + 'CopVPNApp.log';
+export const socketFile = '/tmp/vpnapp.sock';
