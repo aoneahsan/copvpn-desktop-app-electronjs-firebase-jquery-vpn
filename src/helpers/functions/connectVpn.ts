@@ -1,6 +1,6 @@
 import { sep } from 'path';
 import { miscDir, openVPNExecCmd, ovpnDir } from 'src/constants';
-import { getPidByName, log } from '.';
+import { getPidByName, log } from '..';
 import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
 
 export const connectOpenVPN = (withoutPass: boolean) => {
